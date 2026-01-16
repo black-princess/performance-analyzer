@@ -2,7 +2,8 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from src.resume_parser import extract_skills
 from src.hackathon_analyzer import analyze_hackathons
-from src.recommender import generate_recommendations
+from src.recommender import generate_recommendations, generate_summary
+
 
 st.set_page_config(page_title="Hackathon Analyzer", layout="centered")
 st.title("AI Hackathon Performance Analyzer")
@@ -13,6 +14,8 @@ if st.button("Analyze"):
     skills = extract_skills(resume_text)
     df, stats = analyze_hackathons("data/hackathons.csv")
     recs = generate_recommendations(skills.keys(), stats)
+    summary = generate_summary(stats)
+
 
     st.subheader("Skill Strength (TF-IDF)")
     st.write(skills)
@@ -30,3 +33,5 @@ if st.button("Analyze"):
     st.subheader("Recommendations")
     for r in recs:
         st.write("•", r)
+    st.subheader("AI Performance Summary")
+    st.success(summary)
