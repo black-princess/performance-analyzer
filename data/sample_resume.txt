@@ -1,0 +1,6 @@
+Skills:
+Python, Machine Learning, Data Analysis
+
+Projects:
+- NLP Sentiment Analysis
+- ML Price Prediction
