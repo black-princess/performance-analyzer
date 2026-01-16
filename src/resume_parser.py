@@ -1,3 +1,4 @@
+import pdfplumber
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 SKILLS = [
@@ -5,12 +6,22 @@ SKILLS = [
     "nlp", "data analysis", "git"
 ]
 
-def extract_skills(resume_text):
+def extract_text_from_pdf(pdf_file):
+    text = ""
+    with pdfplumber.open(pdf_file) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text() or ""
+    return text.lower()
+
+def extract_skills_from_pdf(pdf_file):
+    text = extract_text_from_pdf(pdf_file)
+
     vectorizer = TfidfVectorizer(vocabulary=SKILLS)
-    tfidf_matrix = vectorizer.fit_transform([resume_text.lower()])
-    
-    scores = dict(zip(vectorizer.get_feature_names_out(),
-                      tfidf_matrix.toarray()[0]))
-    
-    found_skills = {k: round(v, 2) for k, v in scores.items() if v > 0}
-    return found_skills
+    tfidf = vectorizer.fit_transform([text])
+
+    scores = dict(zip(
+        vectorizer.get_feature_names_out(),
+        tfidf.toarray()[0]
+    ))
+
+    return {k: round(v, 2) for k, v in scores.items() if v > 0}
